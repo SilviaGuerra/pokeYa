@@ -1,7 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {useQuery} from '@tanstack/react-query';
 import {useNavigation} from '@react-navigation/native';
+import {fetchFn} from '../utils/api';
 
 interface PokeLinkProps {
   url: string;
@@ -21,35 +28,32 @@ interface PokeCardProps {
 }
 
 const PokeCard = ({url, name}: PokeLinkProps) => {
-  // const {isLoading, error, data} = useQuery(['pokemon', name], () =>
-  //   fetch(url).then(res => res.json()),
-  // );
-  const [pokemon, setPokemon] = useState<PokeCardProps>();
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        setPokemon(data);
-      });
-  }, [url]);
+  const {isLoading, error, data} = useQuery<PokeCardProps>(
+    ['pokemon', name],
+    () => fetchFn(url),
+  );
 
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('Details', {name})}>
-      {pokemon ? (
+      // onPress={() => navigation.navigate('Details', {name})}
+    >
+      {(() => {
+        if (isLoading) {
+          return <ActivityIndicator />;
+        }
+      })()}
+      {!data || error ? null : (
         <>
           <Image
             source={{
-              uri: pokemon.sprites.other['official-artwork'].front_default,
+              uri: data.sprites.other['official-artwork'].front_default,
             }}
             style={styles.image}
           />
-          <Text>{pokemon.name}</Text>
+          <Text>{data.name}</Text>
         </>
-      ) : null}
+      )}
     </TouchableOpacity>
   );
 };

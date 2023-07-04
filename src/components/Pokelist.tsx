@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -6,55 +6,55 @@ import {
   ScrollView,
   View,
 } from 'react-native';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import PokeCard from './PokeCard';
+import {fetchAllPokemon} from '../utils/api';
 
-interface PokemonProps {
-  name: string;
-  url: string;
+interface AllPokemonProps {
+  count: number;
+  next: string;
+  previous?: string;
+  results: {
+    name: string;
+    url: string;
+  }[];
 }
 
 const PokeList = () => {
-  const [pokemon, setPokemon] = useState<PokemonProps[]>([]);
-  const [next, setNext] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    fetch('https://pokeapi.co/api/v2/pokemon/')
-      .then(res => res.json())
-      .then(data => {
-        setPokemon(data.results);
-        setNext(data.next);
-      });
-  }, []);
+  const {data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage} =
+    useInfiniteQuery<AllPokemonProps>(['pokemons'], fetchAllPokemon, {
+      getNextPageParam: lastPage => lastPage.next,
+    });
 
   const loadMore = () => {
-    if (next) {
-      setIsLoading(true);
-      fetch(next)
-        .then(res => res.json())
-        .then(data => {
-          setPokemon(prevPokemon => [...prevPokemon, ...data.results]);
-          setNext(data.next);
-          setIsLoading(false);
-        });
+    if (hasNextPage) {
+      fetchNextPage;
     }
   };
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
 
   return (
     <SafeAreaView>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View>
-          <FlatList
-            data={pokemon}
-            // keyExtractor={item => item.name}
-            renderItem={({item}) => (
-              <PokeCard url={item.url} name={item.name} />
+          <>
+            {!data ? null : (
+              <FlatList
+                data={data.pages.flatMap(page => page.results)}
+                // keyExtractor={item => item.name}
+                renderItem={({item}) => (
+                  <PokeCard url={item.url} name={item.name} />
+                )}
+                // onEndReached={loadMore}
+                ListFooterComponent={() =>
+                  isFetchingNextPage ? <ActivityIndicator /> : null
+                }
+              />
             )}
-            // onEndReached={loadMore}
-            ListFooterComponent={() =>
-              isLoading ? <ActivityIndicator /> : null
-            }
-          />
+          </>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -11,15 +11,15 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    // <QueryClientProvider client={queryClient}>
-    //   <PokeList />
-    // </QueryClientProvider>
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Pokedex" component={PokeList} />
-        <Stack.Screen name="Details" component={PokeDetails} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <PokeList />
+    </QueryClientProvider>
+    // <NavigationContainer>
+    //   <Stack.Navigator>
+    //     <Stack.Screen name="Pokedex" component={PokeList} />
+    //     <Stack.Screen name="Details" component={PokeDetails} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   );
 };
 
