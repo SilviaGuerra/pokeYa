@@ -1,12 +1,7 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  View,
-} from 'react-native';
 import {useInfiniteQuery} from '@tanstack/react-query';
+import {Center, Spinner, FlatList} from 'native-base';
+
 import PokeCard from './PokeCard';
 import {fetchAllPokemon} from '../utils/api';
 
@@ -33,31 +28,26 @@ const PokeList = () => {
   };
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return (
+      <Center flex={1}>
+        <Spinner size="lg" color="black" />
+      </Center>
+    );
   }
 
   return (
-    <SafeAreaView>
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <View>
-          <>
-            {!data ? null : (
-              <FlatList
-                data={data.pages.flatMap(page => page.results)}
-                // keyExtractor={item => item.name}
-                renderItem={({item}) => (
-                  <PokeCard url={item.url} name={item.name} />
-                )}
-                // onEndReached={loadMore}
-                ListFooterComponent={() =>
-                  isFetchingNextPage ? <ActivityIndicator /> : null
-                }
-              />
-            )}
-          </>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <>
+      {!data ? null : (
+        <FlatList
+          data={data.pages.flatMap(page => page.results)}
+          // keyExtractor={item => item.name}
+          renderItem={({item}) => <PokeCard url={item.url} name={item.name} />}
+          // onEndReached={loadMore}
+          contentInsetAdjustmentBehavior="automatic"
+          ListFooterComponent={() => (isFetchingNextPage ? <Spinner /> : null)}
+        />
+      )}
+    </>
   );
 };
 
