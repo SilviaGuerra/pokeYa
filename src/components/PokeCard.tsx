@@ -8,38 +8,23 @@ import {
   Image,
   Text,
   HStack,
+  Skeleton,
   Pressable,
   Center,
   AspectRatio,
 } from 'native-base';
 import {fetchFn} from '../utils/api';
 import {formatNumber, getTypeColor} from '../utils/helpers';
-
-interface PokeLinkProps {
-  url: string;
-  name: string;
-}
-
-interface PokeCardProps {
-  name?: string;
-  order?: number;
-  sprites: {
-    other: {
-      'official-artwork': {
-        front_default: string;
-      };
-    };
-  };
-  types: {
-    slot: number;
-    type: {
-      name: string;
-    };
-  }[];
-}
+import {
+  MainStackScreenProps,
+  PokeCardProps,
+  PokeLinkProps,
+} from '../utils/types/types';
 
 const PokeCard = ({url, name}: PokeLinkProps) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<MainStackScreenProps<'Home'>['navigation']>();
+
   const {isLoading, error, data} = useQuery<PokeCardProps>(
     ['pokemon', name],
     () => fetchFn(url),
@@ -54,7 +39,7 @@ const PokeCard = ({url, name}: PokeLinkProps) => {
         data ? getTypeColor(data.types[0].type.name) + '.500' : ''
       }
       borderRadius={10}
-      onPress={() => navigation.navigate('Details', {name})}>
+      onPress={() => navigation.navigate('Detail', {name, url})}>
       {(() => {
         if (isLoading) {
           return <ActivityIndicator />;
@@ -62,18 +47,20 @@ const PokeCard = ({url, name}: PokeLinkProps) => {
       })()}
       {!data || error ? null : (
         <>
-          <Center>
+          <Center
+            safeArea
+            backgroundColor={getTypeColor(data.types[0].type.name) + '.500'}>
             <AspectRatio ratio={1} width="80%">
               <Image
                 source={{
                   uri: data.sprites.other['official-artwork'].front_default,
                 }}
-                alt="Pokeimage"
+                alt={data.name}
               />
             </AspectRatio>
           </Center>
           <HStack justifyContent="space-between" mb={2}>
-            <Heading textTransform="capitalize" color="white">
+            <Heading textTransform="capitalize" color="white" size="sm">
               {data.name}
             </Heading>
             <Text color="white">#{formatNumber(data.id)}</Text>
@@ -88,6 +75,7 @@ const PokeCard = ({url, name}: PokeLinkProps) => {
                 borderRadius={10}
                 _text={{
                   color: 'white',
+                  fontSize: 'xs',
                 }}>
                 {type.type.name}
               </Box>

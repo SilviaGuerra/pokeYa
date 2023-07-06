@@ -40,11 +40,17 @@ const PokeList = () => {
       {!data ? null : (
         <FlatList
           data={data.pages.flatMap(page => page.results)}
-          // keyExtractor={item => item.name}
+          keyExtractor={item => item.name}
           renderItem={({item}) => <PokeCard url={item.url} name={item.name} />}
-          // onEndReached={loadMore}
+          onEndReached={loadMore}
+          numColumns={2}
           contentInsetAdjustmentBehavior="automatic"
-          ListFooterComponent={() => (isFetchingNextPage ? <Spinner /> : null)}
+          ListFooterComponent={() =>
+            isFetchingNextPage ? (
+              <Spinner mt="4" size="lg" color="black" />
+            ) : null
+          }
+          _contentContainerStyle={{p: 2, bg: 'white'}}
         />
       )}
     </>

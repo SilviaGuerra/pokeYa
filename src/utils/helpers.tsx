@@ -21,10 +21,16 @@ export const typesColors = {
   shadow: 'dark',
 };
 
+// Obtener el color de tipos de pokemon
 export const getTypeColor = (type: string) => {
   return typesColors[type as keyof typesColors] || 'light';
 };
 
+// Crea formato para número de pokemon
 export const formatNumber = (num: number) => {
   return num.toString().padStart(3, '0');
+};
+
+export const removeEscapeCharacters = (str: string) => {
+  return str.replace(/[\n\r\t\f]/g, ' ');
 };
