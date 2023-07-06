@@ -1,7 +1,16 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+export interface AllPokemonProps {
+  count: number;
+  next: string;
+  previous?: string;
+  results: {
+    name: string;
+    url: string;
+  }[];
+}
 export interface PokeLinkProps {
-  url: string;
   name: string;
+  url: string;
 }
 
 export interface PokeCardProps {

@@ -4,16 +4,7 @@ import {Center, Spinner, FlatList} from 'native-base';
 
 import PokeCard from './PokeCard';
 import {fetchAllPokemon} from '../utils/api';
-
-interface AllPokemonProps {
-  count: number;
-  next: string;
-  previous?: string;
-  results: {
-    name: string;
-    url: string;
-  }[];
-}
+import {AllPokemonProps} from '../utils/types/types';
 
 const PokeList = () => {
   const {data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage} =
