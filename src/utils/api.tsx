@@ -9,3 +9,11 @@ export const fetchAllPokemon = async ({pageParam}: {pageParam?: string}) => {
   );
   return response.json();
 };
+
+export const fetchPokemon = async (name: string) => {
+  const response = await fetch('https://pokeapi.co/api/v2/pokemon/' + name);
+  if (!response.ok) {
+    throw new Error(`Pokemon ${name} no encontrado`);
+  }
+  return response.json();
+};
