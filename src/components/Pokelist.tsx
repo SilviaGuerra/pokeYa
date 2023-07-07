@@ -14,7 +14,7 @@ const PokeList = () => {
 
   const loadMore = () => {
     if (hasNextPage) {
-      fetchNextPage;
+      fetchNextPage();
     }
   };
 
@@ -30,6 +30,7 @@ const PokeList = () => {
     <>
       {!data ? null : (
         <FlatList
+          testID="load-data-pokemon"
           data={data.pages.flatMap(page => page.results)}
           keyExtractor={item => item.name}
           renderItem={({item}) => <PokeCard url={item.url} name={item.name} />}
